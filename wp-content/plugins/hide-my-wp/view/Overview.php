@@ -64,6 +64,15 @@ if(!$sorted) {
 
                                 <div id="features" class="inside">
                                     <div class="card-body p-0">
+
+                                        <div class="hmwp_row col-12">
+                                            <label for="hmwp_features_search" class="my-1 mx-3"><?php echo esc_html__('Search', 'hide-my-wp'); ?></label>
+                                            <input id="hmwp_features_search" type="text" class="col-3"/>
+                                        </div>
+                                        <div id="hmwp_feature_none" class="hmwp_row col-12 text-center my-5" style="display: none">
+                                            <?php echo esc_html__('Could not found anything based on your search.', 'hide-my-wp'); ?>
+                                        </div>
+
                                         <?php defined('ABSPATH') || die('Cheatin\' uh?'); ?>
                                         <?php $features = $view->getFeatures(); ?>
                                         <div class="hmwp_features m-0 p-0">
@@ -80,7 +89,7 @@ if(!$sorted) {
                                                         <div id="hmwp_feature_<?php echo esc_attr($index) ?>" class="hmwp_feature card h-100 p-0 shadow-0 rounded-0 <?php echo ($feature['free'] ?  (!$feature['active'] ? 'bg-light' : 'active') :  'hmwp_pro') ?>">
                                                             <div class="card-body m-0 p-0">
                                                                 <div class="m-0 p-0 text-center">
-                                                                    <div class="m-0 py-4 <?php echo esc_attr($feature['logo']) ?>"  style="font-size: 1.9rem; line-height: 30px; color:#71512794"></div>
+                                                                    <div class="m-0 py-4 <?php echo esc_attr($feature['logo']) ?>"  style="font-size: 1.9rem; line-height: 30px; color:#71512794; width: 30px; height: 80px; margin: 0 auto !important;"></div>
                                                                     <h5 class="py-0  m-0">
                                                                         <?php if($feature['link'] ) { ?>
                                                                             <a href="<?php echo esc_url($feature['link']) ?>" class="text-dark" style="text-decoration: none"><?php echo wp_kses_post($feature['title']) ?></a>
@@ -180,6 +189,11 @@ if(!$sorted) {
                 <?php $view->show('blocks/ChangeCacheFiles'); ?>
                 <?php $view->show('blocks/SecurityCheck'); ?>
                 <?php $view->show('blocks/FrontendCheck'); ?>
+                <?php
+                    if (!HMWP_Classes_Tools::getOption('api_token')){
+                        $view->show('blocks/Connect');
+                    }
+                ?>
 
             </div>
         </div>

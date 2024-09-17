@@ -3,7 +3,7 @@
 <div id="hmwp_wrap" class="d-flex flex-row p-0 my-3">
 <?php echo $view->getAdminTabs(HMWP_Classes_Tools::getValue('page', 'hmwp_log')); ?>
     <div class="hmwp_row d-flex flex-row p-0 m-0">
-        <div class="hmwp_col flex-grow-1 px-3 py-3 mr-2 mb-3 bg-white">
+        <div class="hmwp_col flex-grow-1 p-0 pr-2 mr-2 mb-3">
 
 
 
@@ -11,7 +11,9 @@
                 <?php wp_nonce_field('hmwp_logsettings', 'hmwp_nonce') ?>
                 <input type="hidden" name="action" value="hmwp_logsettings"/>
                 <div id="log" class="card col-sm-12 p-0 m-0 tab-panel ">
-                    <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('Events Log Settings', 'hide-my-wp'); ?></h3>
+                    <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('Events Log Settings', 'hide-my-wp'); ?>
+                        <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/users-activity-log/#check_user_events') ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                    </h3>
                     <div class="card-body">
                         <div class="col-sm-12 row mb-1 py-3 mx-2 hmwp_pro">
                             <div class="box" >
@@ -22,7 +24,7 @@
                                     <input type="checkbox" id="hmwp_activity_log" name="hmwp_activity_log" class="switch" <?php echo( HMWP_Classes_Tools::getOption('hmwp_activity_log') ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="hmwp_activity_log"><?php echo esc_html__('Log Users Events', 'hide-my-wp'); ?></label>
                                     <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/users-activity-log/#activate_user_events_log') ?>" target="_blank" class="d-inline-block ml-2"><i class="dashicons dashicons-editor-help"></i></a>
-                                    <div class="offset-1 text-black-50"><?php echo esc_html__('Track and log events that happen on your WordPress site', 'hide-my-wp'); ?></div>
+                                    <div class="text-black-50 ml-5"><?php echo esc_html__('Track and log events that happen on your WordPress site', 'hide-my-wp'); ?></div>
                                 </div>
                             </div>
                         </div>
@@ -37,7 +39,7 @@
 
             </form>
         </div>
-        <div class="hmwp_col hmwp_col_side p-0 m-0 mr-2">
+        <div class="hmwp_col hmwp_col_side p-0 pr-2 mr-2">
             <div class="card col-sm-12 m-0 p-0 rounded-0">
                 <div class="card-body f-gray-dark text-left">
                     <h3 class="card-title"><?php echo esc_html__('Events Log', 'hide-my-wp'); ?></h3>

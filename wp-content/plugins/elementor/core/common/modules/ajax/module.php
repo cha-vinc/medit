@@ -182,7 +182,7 @@ class Module extends BaseModule {
 
 		$this->current_action_id = null;
 
-		$this->send_successs();
+		$this->send_success(); 
 	}
 
 	/**

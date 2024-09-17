@@ -17,34 +17,64 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
     {
         parent::__construct();
 
+        //listen the login process and check BF
         add_filter('authenticate', array($this, 'hmwp_check_preauth'), 99, 1);
+
+        //once logged in, clear blocked IPs
         add_action('admin_init', array($this, 'hmwp_update_trusted_headers'), 99);
 
-	    if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
-		    add_filter('registration_errors', array($this, 'hmwp_check_registration'), 99, 3);
-	    }
+        //listen BF shortcode on forms
+        add_shortcode('hmwp_bruteforce', array($this, 'hmwp_bruteforce_shortcode') );
 
-        if (HMWP_Classes_Tools::getOption('brute_use_math')) {
-            add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
-            add_action('login_form', array($this->model, 'brute_math_form'), 99);
-	        if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
-		        add_action('register_form', array($this->model, 'brute_math_form'), 99);
-	        }
-        }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha')) {
-            add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
-            add_action('login_head', array($this->model, 'brute_recaptcha_head'), 99);
-            add_action('login_form', array($this->model, 'brute_recaptcha_form'), 99);
-	        if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
-		        add_action('register_form', array($this->model, 'brute_recaptcha_form'), 99);
-	        }
-        }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha_v3')) {
-            add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
-            add_action('login_head', array($this->model, 'brute_recaptcha_head_v3'), 99);
-            add_action('login_form', array($this->model, 'brute_recaptcha_form_v3'), 99);
-	        if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
-		        add_action('register_form', array($this->model, 'brute_recaptcha_form_v3'), 99);
-	        }
+        //Check BF on register
+        if (HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
+            add_filter('registration_errors', array($this, 'hmwp_check_registration'), 99, 3);
         }
+
+        //Check BF on Lost Password
+        if (HMWP_Classes_Tools::getOption('hmwp_bruteforce_lostpassword')) {
+            add_filter('lostpassword_errors', array($this, 'hmwp_check_lpassword'), 99, 2);
+        }
+
+	    if (HMWP_Classes_Tools::getOption('brute_use_math')) {
+		    add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
+		    add_action('login_form', array($this->model, 'brute_math_form'), 99);
+
+		    if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_lostpassword')) {
+			    add_filter('lostpassword_form', array($this->model, 'brute_math_form'), 99);
+		    }
+
+		    if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
+			    add_action('register_form', array($this->model, 'brute_math_form'), 99);
+		    }
+
+	    }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha')) {
+		    add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
+		    add_action('login_head', array($this->model, 'brute_recaptcha_head'), 99);
+		    add_action('login_form', array($this->model, 'brute_recaptcha_form'), 99);
+
+            if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_lostpassword')) {
+			    add_filter('lostpassword_form', array($this->model, 'brute_recaptcha_form'), 99);
+		    }
+
+		    if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
+			    add_action('register_form', array($this->model, 'brute_recaptcha_form'), 99);
+		    }
+
+	    }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha_v3')) {
+		    add_action('wp_login_failed', array($this, 'hmwp_failed_attempt'), 99);
+		    add_action('login_head', array($this->model, 'brute_recaptcha_head_v3'), 99);
+		    add_action('login_form', array($this->model, 'brute_recaptcha_form_v3'), 99);
+
+            if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_lostpassword')) {
+			    add_filter('lostpassword_form', array($this->model, 'brute_recaptcha_form_v3'), 99);
+		    }
+
+		    if(HMWP_Classes_Tools::getOption('hmwp_bruteforce_register')) {
+			    add_action('register_form', array($this->model, 'brute_recaptcha_form_v3'), 99);
+		    }
+
+	    }
 
     }
 
@@ -55,10 +85,15 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
             //Load the Multilanguage
             HMWP_Classes_Tools::loadMultilanguage();
 
+            //check brute force
             $this->bruteBlockCheck();
         }
     }
 
+    /**
+     * Check the BF
+     * @return void
+     */
     public function bruteBlockCheck()
     {
         $response = $this->model->brute_call('check_ip');
@@ -75,6 +110,66 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
     }
 
     /**
+     * Get the brute force using shortcode
+     * @param $atts
+     * @param $content
+     *
+     * @return string|void
+     */
+    public function hmwp_bruteforce_shortcode( $atts = array(), $content = '' ){
+        global $hmwp_bruteforce;
+
+        if (function_exists('is_user_logged_in') && is_user_logged_in()) {
+            return;
+        }
+
+        $hmwp_bruteforce = true;
+
+        if (HMWP_Classes_Tools::getOption('brute_use_math')) {
+            $script = '
+                <script>
+                function reCaptchaSubmit(e) {
+                    var form = this;
+                    e.preventDefault();
+    
+                    var brute_num = document.getElementsByName("brute_num")[0];
+                    if(typeof brute_num !== "undefined"){
+                        var input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "brute_num" ;
+                        input.value = brute_num.value ;
+                        form.appendChild(input);
+                    }
+                    
+                    var brute_ck = document.getElementsByName("brute_ck")[0];
+                    if(typeof brute_ck !== "undefined"){
+                        var input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "brute_ck" ;
+                        input.value = brute_ck.value ;
+                        form.appendChild(input);
+                    }
+                    
+                    form.submit();
+                }
+    
+                if(document.getElementsByTagName("form").length > 0) {
+                    var x = document.getElementsByTagName("form");
+                    for (var i = 0; i < x.length; i++) {
+                        x[i].addEventListener("submit", reCaptchaSubmit);
+                    }
+                }
+            </script>';
+            return $this->model->brute_math_form() . $script;
+        }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha')) {
+            return $this->model->brute_recaptcha_head() . $this->model->brute_recaptcha_form();
+        }elseif (HMWP_Classes_Tools::getOption('brute_use_captcha_v3')) {
+            return $this->model->brute_recaptcha_head_v3() . $this->model->brute_recaptcha_form_v3();
+        }
+
+    }
+
+    /**
      * Called when an action is triggered
      *
      * @return void
@@ -88,6 +183,9 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
         case 'hmwp_brutesettings':
             HMWP_Classes_Tools::saveOptions('hmwp_bruteforce', HMWP_Classes_Tools::getValue('hmwp_bruteforce'));
             HMWP_Classes_Tools::saveOptions('hmwp_bruteforce_register', HMWP_Classes_Tools::getValue('hmwp_bruteforce_register'));
+	        HMWP_Classes_Tools::saveOptions('hmwp_bruteforce_lostpassword', HMWP_Classes_Tools::getValue('hmwp_bruteforce_lostpassword'));
+            HMWP_Classes_Tools::saveOptions('hmwp_bruteforce_username', HMWP_Classes_Tools::getValue('hmwp_bruteforce_username'));
+            HMWP_Classes_Tools::saveOptions('hmwp_bruteforce_woocommerce', HMWP_Classes_Tools::getValue('hmwp_bruteforce_woocommerce'));
 
             //whitelist_ip
             $whitelist = HMWP_Classes_Tools::getValue('whitelist_ip', '', true);
@@ -109,7 +207,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
 
                 // If the IP is in a private or reserved range, keep looking
                 if ($ip == '127.0.0.1' || $ip == '::1') {
-                    HMWP_Classes_Error::setError(esc_html__("Add only real IPs. No local ips allowed.", 'hide-my-wp'));
+                    HMWP_Classes_Error::setNotification(esc_html__("Add only real IPs. No local ips allowed.", 'hide-my-wp'));
                 }
             }
             if (!empty($ips)) {
@@ -123,7 +221,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
                 $attempts = HMWP_Classes_Tools::getValue('brute_max_attempts');
                 if ((int)$attempts <= 0) {
                     $attempts = 3;
-                    HMWP_Classes_Error::setError(esc_html__('You need to set a positive number of attempts.', 'hide-my-wp'));
+                    HMWP_Classes_Error::setNotification(esc_html__('You need to set a positive number of attempts.', 'hide-my-wp'));
 
                 }
                 HMWP_Classes_Tools::saveOptions('brute_max_attempts', (int)$attempts);
@@ -131,7 +229,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
                 $timeout = HMWP_Classes_Tools::getValue('brute_max_timeout');
                 if ((int)$timeout <= 0) {
                     $timeout = 3600;
-                    HMWP_Classes_Error::setError(esc_html__('You need to set a positive waiting time.', 'hide-my-wp'));
+                    HMWP_Classes_Error::setNotification(esc_html__('You need to set a positive waiting time.', 'hide-my-wp'));
 
                 }
                 HMWP_Classes_Tools::saveOptions('hmwp_brute_message', HMWP_Classes_Tools::getValue('hmwp_brute_message', '', true));
@@ -161,7 +259,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
                 }
 
                 HMWP_Classes_Tools::emptyCache();
-                HMWP_Classes_Error::setError(esc_html__('Saved'), 'success');
+                HMWP_Classes_Error::setNotification(esc_html__('Saved'), 'success');
             }
 
             break;
@@ -178,10 +276,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
 
         case 'hmwp_blockedips':
             if(HMWP_Classes_Tools::isAjax()) {
-                HMWP_Classes_Tools::setHeader('json');
-                $data = $this->getBlockedIps();
-                echo json_encode(array('data' => $data));
-                exit();
+                wp_send_json_success($this->getBlockedIps());
             }
             break;
         }
@@ -201,6 +296,9 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
         if (!empty($ips)) {
             $cnt = 1;
             foreach ($ips as $transient => $ip) {
+                //increment fail attempt as it starts from 0
+                $ip['attempts'] = (int)$ip['attempts'] + 1;
+
                 $data .= "<tr>
                         <td>" . $cnt . "</td>
                         <td>{$ip['ip']}</td>
@@ -218,8 +316,8 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
             }
         } else {
             $data .= "<tr>
-                                <td colspan='5'>" . _('No blacklisted ips') . "</td>
-                             </tr>";
+                        <td colspan='5'>" . _('No blacklisted ips') . "</td>
+                     </tr>";
         }
         $data .= '</table>';
 
@@ -235,26 +333,64 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
 	 */
 	function hmwp_check_registration($errors, $sanitizedLogin, $userEmail){
 
-		$response = $this->model->brute_check_loginability();
+        //only in frontend for not logged users
+        if (function_exists('is_user_logged_in') && !is_user_logged_in()) {
 
-		if (HMWP_Classes_Tools::getOption('brute_use_math')) {
+            $response = $this->model->brute_check_loginability();
 
-			$errors = $this->model->brute_math_authenticate($errors, $response);
+            $error = false;
 
-		} elseif (HMWP_Classes_Tools::getOption('brute_use_captcha') || HMWP_Classes_Tools::getOption('brute_use_captcha_v3')) {
+            if (HMWP_Classes_Tools::getOption('brute_use_math')) {
 
-			$errors = $this->model->brute_catpcha_authenticate($errors, $response);
+                $error = $this->model->brute_math_authenticate($errors, $response);
 
-		}
+            } elseif (HMWP_Classes_Tools::getOption('brute_use_captcha') || HMWP_Classes_Tools::getOption('brute_use_captcha_v3')) {
 
-		if (!is_wp_error($errors)) {
-			$this->model->brute_call('clear_ip');
-		}
+                $error = $this->model->brute_catpcha_authenticate($errors, $response);
+
+            }
+
+            if (is_wp_error($error)) {
+                return $error;
+            }else{
+                $this->model->brute_call('clear_ip');
+            }
+
+        }
 
 		return $errors;
 	}
 
-    /**
+	/**
+	 * Check the lost password
+	 *
+	 * @param $errors
+	 * @param $user
+	 * @return bool|mixed|string|WP_Error
+	 */
+	function hmwp_check_lpassword($errors, $user){
+
+        //only in frontend for not logged users
+        if (function_exists('is_user_logged_in') && !is_user_logged_in()) {
+
+            $error = $this->hmwp_check_preauth($user);
+
+            if (is_wp_error($error)) {
+
+                if (function_exists('wc_add_notice')) {
+                    wc_add_notice($error->get_error_message(), 'error');
+                    add_filter('allow_password_reset', '__return_false');
+                }
+
+                return $error;
+            }
+        }
+
+		return $errors;
+	}
+
+
+	/**
      * Checks for loginability BEFORE authentication so that bots don't get to go around the login form.
      *
      * If we are using our math fallback, authenticate via math-fallback.php
@@ -266,20 +402,7 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
     function hmwp_check_preauth($user = '')
     {
 
-	    //Check if Woocommerce login support is loaded
-	    if(HMWP_Classes_Tools::isPluginActive('woocommerce/woocommerce.php')
-	       &&  HMWP_Classes_Tools::getValue('woocommerce-login-nonce')) {
-
-		    return $user;
-	    }
-
-	    //If Login/Signup Popup is active and logged in through it
-	    if(HMWP_Classes_Tools::isPluginActive('easy-login-woocommerce/xoo-el-main.php')
-	       && !HMWP_Classes_Tools::getOption('brute_use_math')
-	       && HMWP_Classes_Tools::isAjax()
-	       && HMWP_Classes_Tools::getValue('xoo-el-username')
-	       && HMWP_Classes_Tools::getValue('xoo-el-password') ) {
-
+	    if(!apply_filters('hmwp_preauth_check', true)){
 		    return $user;
 	    }
 
@@ -296,6 +419,13 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
                     foreach ($errors as $error) {
                         if ($error == 'empty_username' || $error == 'empty_password') {
                             return $user;
+                        }
+
+                        if (HMWP_Classes_Tools::getOption('hmwp_bruteforce_username')) {
+                            if($error == 'invalid_username'){
+                                $ip = $this->model->brute_get_ip();
+                                $this->model->block_ip($ip);
+                            }
                         }
                     }
                 }
@@ -339,11 +469,12 @@ class HMWP_Controllers_Brute extends HMWP_Classes_FrontController
         return $user;
     }
 
-    /**
-     * Called via WP action wp_login_failed to log failed attempt in db
-     *
-     * @return void
-     */
+	/**
+	 * Called via WP action wp_login_failed to log failed attempt in db
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
     function hmwp_failed_attempt()
     {
         $this->model->brute_call('failed_attempt');

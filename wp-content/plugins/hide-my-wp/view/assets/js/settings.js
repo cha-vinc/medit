@@ -15,7 +15,7 @@
             if (results) {
                 return results[1] || 0
             }
-        }
+        } 
         return false
     };
 
@@ -41,6 +41,20 @@
             location.href += "#" + key + "=" + val
         }
     };
+
+    //Set stripes in table rows
+    $.hmwp_setStripe = function (rows){
+        var count = 0;
+        $(rows).each(function (index, row) {
+            $(row).removeClass('odd');
+            if ($(row).is(":visible")) {
+                if (count % 2 == 1) { //odd row
+                    $(row).addClass('odd');
+                }
+                count++;
+            }
+        });
+    }
 
     //Add the loading icon to field
     $.fn.hmwp_loading = function (state) {
@@ -75,12 +89,12 @@
             function (response) {
                 $this.hmwp_loading(false);
 
-                if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                     if (response.success) {
-                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.message + '</div>');
+                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.data + '</div>');
                         $this.hide();
                     } else {
-                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.message + '</div>');
+                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.data + '</div>');
                     }
                 }
 
@@ -123,12 +137,12 @@
             function (response) {
                 $this.hmwp_loading(false);
 
-                if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                     if (response.success) {
-                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.message + '</div>');
+                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.data + '</div>');
                         $this.hide();
                     } else {
-                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.message + '</div>');
+                        $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.data + '</div>');
                     }
                 }
 
@@ -166,12 +180,12 @@
                     $form.serialize()
                 ).done(
                     function (response) {
-                        if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                        if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                             if (response.success) {
-                                $('body').parents('tr:last').fadeOut();
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.message + '</div>');
+                                $form.parents('tr:last').hide();
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.data + '</div>');
                             } else {
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.message + '</div>');
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.data + '</div>');
                             }
                         }
                         setTimeout(
@@ -228,17 +242,18 @@
                 ).done(
                     function (response) {
 
-                        if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                        if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                             if (response.success) {
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.message + '</div>');
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.data + '</div>');
                             } else {
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.message + '</div>');
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.data + '</div>');
                             }
                         }
 
                         setTimeout(
                             function () {
                                 $('.hmwp_notice').remove();
+                                $form.find('button[type=submit]').hmwp_loading(false);
                             }, 5000
                         )
 
@@ -274,12 +289,11 @@
                     $form.serialize()
                 ).done(
                     function (response) {
-                        if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                        if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                             if (response.success) {
-                                $this.find('#hmwp_frontendcheck_content').html('<div class="text-center alert alert-success my-2" role="alert">' + response.message + '</div>');
+                                $this.find('#hmwp_frontendcheck_content').html('<div class="text-center alert alert-success my-2" role="alert">' + response.data + '</div>');
                             } else {
-                                $this.find('#hmwp_frontendcheck_content').html('<div class="text-center alert alert-danger my-2" role="alert">' + response.message + '</div>');
-                                $this.find('#hmwp_solutions').show();
+                                $this.find('#hmwp_frontendcheck_content').html('<div class="text-center alert alert-danger my-2" role="alert">' + response.data + $this.find('#hmwp_solutions').html() + '</div>');
                             }
                         }
                         $this.find('#hmwp_frontendcheck_content').removeClass('wp_loading_min');
@@ -296,6 +310,24 @@
             }
         );
 
+        $this.find('.show_task_passed').on('click', function (){
+            $('.task_passed').show();
+            $('.hide_task_passed').show();
+            $(this).hide();
+
+            $.hmwp_setStripe('.table_securitycheck tr');
+        });
+
+        $this.find('.hide_task_passed').on('click', function (){
+            $('.task_passed').hide();
+            $('.show_task_passed').show();
+            $(this).hide();
+
+            $.hmwp_setStripe('.table_securitycheck tr');
+        });
+
+        $.hmwp_setStripe('.table_securitycheck tr');
+
     };
 
     //Add the Listener for Settings
@@ -304,6 +336,38 @@
         var $this = this;
         //init settings as saved
         var unsaved = false;
+
+        //search option in features
+        $this.find("#hmwp_features_search").on('keyup', function(){
+
+            if(typeof $searchTimeout !== 'undefined'){
+                clearTimeout($searchTimeout);
+            }
+            if($(this).val() !== ''){
+                var $search = $(this).val();
+
+                var $searchTimeout = setTimeout(function(){
+                    $this.find('.hmwp_feature').each(function (){
+                        if($(this).text().toLowerCase().indexOf($search.toLowerCase()) !== -1){
+                            $(this).parent('div').show();
+                        }else{
+                            $(this).parent('div').hide();
+                        }
+                    });
+
+                    if(!$this.find('.hmwp_feature').is(":visible")){
+                        $this.find('#hmwp_feature_none').show();
+                    }else{
+                        $this.find('#hmwp_feature_none').hide();
+                    }
+                }, 1000);
+            }else{
+                $this.find('.hmwp_feature').each(function (){
+                    $(this).parent('div').show();
+                });
+            }
+
+        });
 
         //listen the SubMenu click
         $this.find(".hmwp_nav_item").on(
@@ -381,11 +445,11 @@
             }
         );
 
-        $this.find("button[type=submit]").click(function(){
+        $this.find("button[type=submit]:not(.noload)").click(function(){
             $(this).hmwp_loading(true);
         });
 
-        $this.find("input[type=submit]").click(function(){
+        $this.find("input[type=submit]:not(.noload)").click(function(){
             $(this).hmwp_loading(true);
         });
 
@@ -418,8 +482,10 @@
             'keyup', function () {
                 if ($(this).val() !== 'wp-login.php'  && $(this).val() != '') {
                     $this.find('.hmwp_hide_wplogin_div').show();
+                    $this.find('.hmwp_hide_newlogin_div').show();
                 } else {
                     $this.find('.hmwp_hide_wplogin_div').hide();
+                    $this.find('.hmwp_hide_newlogin_div').hide();
                 }
 
                 if ($(this).val() !== 'login'  && $(this).val() != '') {
@@ -529,7 +595,9 @@
                 $this.find('input[name=brute_use_math]').val(1);
                 $this.find('input[name=brute_use_captcha]').val(0);
                 $this.find('input[name=brute_use_captcha_v3]').val(0);
+
                 $this.find('.group_autoload button').removeClass('active');
+                $(this).addClass('active');
 
                 $this.find('div.brute_use_math').show();
                 $this.find('div.brute_use_captcha').hide();
@@ -542,7 +610,9 @@
                 $this.find('input[name=brute_use_captcha]').val(1);
                 $this.find('input[name=brute_use_math]').val(0);
                 $this.find('input[name=brute_use_captcha_v3]').val(0);
+
                 $this.find('.group_autoload button').removeClass('active');
+                $(this).addClass('active');
 
                 $this.find('div.brute_use_captcha').show();
                 $this.find('div.brute_use_math').hide();
@@ -555,7 +625,9 @@
                 $this.find('input[name=brute_use_captcha]').val(0);
                 $this.find('input[name=brute_use_math]').val(0);
                 $this.find('input[name=brute_use_captcha_v3]').val(1);
+
                 $this.find('.group_autoload button').removeClass('active');
+                $(this).addClass('active');
 
                 $this.find('div.brute_use_captcha').hide();
                 $this.find('div.brute_use_math').hide();
@@ -612,9 +684,9 @@
                     $form.serialize()
                 ).done(
                     function (response) {
-                        if (typeof response.success !== 'undefined' && typeof response.message !== 'undefined') {
+                        if (typeof response.success !== 'undefined' && typeof response.data !== 'undefined') {
                             if (response.success) {
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.message + '</div>');
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed success" role="alert">' + response.data + '</div>');
 
                                 if($input.prop('checked')) {
                                     $form.parents('.hmwp_feature:last').removeClass('bg-light').addClass('active');
@@ -626,7 +698,7 @@
                                 unsaved = false;
 
                             } else {
-                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.message + '</div>');
+                                $('body').prepend('<div class="text-center hmwp_notice hmwp_notice_fixed danger" role="alert">' + response.data + '</div>');
                             }
                         }
 

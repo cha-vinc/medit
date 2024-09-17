@@ -61,7 +61,7 @@ $lien=get_field('lien_google_maps', 161);
 		<?php echo $description; ?>
 		<div class="popup-details">
 			<div class="popup-address">
-				<p><b>Le lieu</b></p>
+				<p><b>Le lieu dfdh</b></p>
 				<?php echo $lieu; ?>
 				<a class="popup-link" href="<?php echo $lien; ?>" target="_blank">Voir sur Google Maps</a>
 			</div>
@@ -73,18 +73,12 @@ $lien=get_field('lien_google_maps', 161);
 		<p class="popup-informations">Vous souhaitez plus d'informations concernant cet événement ?</p>
 		<?php
 		// On insère le formulaire de demandes de renseignements
-		do_shortcode('[contact-form-7 id="910" title="Formulaire salon New York"]');
+		echo do_shortcode('[contact-form-7 id="910" title="Formulaire salon New York"]');
 		?>
 	</div>
 </div>
 
-<!-- Code pour fermer la popup -->
 
-<script>
-$('.popup-close').click(function(){
-	$(this).parent().hide();
-})
-</script>
 
 
 <!-- Ajout d'un bouton contact au menu -->
@@ -94,7 +88,7 @@ $('.popup-close').click(function(){
 /**
  * Shortcode pour ajouter un bouton
  */
-function contact_btn() {
+/*function contact_btn() {
 
 	// Code du bouton
 	$string .= '<a href="/contact" class="contact-btn">Nous contacter</a>';
@@ -104,6 +98,6 @@ function contact_btn() {
 
 }
 // On publie le shortcode
-add_shortcode('contact', 'contact_btn');
+add_shortcode('contact', 'contact_btn');*/  /*Mis en commentaire le 06/09 car fonction existante dans le fichier functions.php */
 
 ?>

@@ -36,8 +36,6 @@ define('DB_COLLATE', '');
 /** Disable WordPress file editor */
 define( 'DISALLOW_FILE_EDIT', true );
 
-define( 'COOKIEHASH', md5($_SERVER['WORDPRESS_DB_PASSWORD'] . 'secure cookies' .$_SERVER['WORDPRESS_DB_PASSWORD'] ) );	// Cookies hardening
-
 define( 'WP_MEMORY_LIMIT', '256M' );
 
 // Disable OP Cache mu-plugin feature
@@ -82,7 +80,7 @@ $table_prefix  = 'wp_';
  * de_DE.mo to wp-content/languages and set WPLANG to 'de_DE' to enable German
  * language support.
  */
-define('WPLANG', '');
+/*define('WPLANG', '');*/
 
 /**
  * For developers: WordPress debugging mode.
@@ -92,14 +90,14 @@ define('WPLANG', '');
  * in their development environments.
  */
 define('WP_DEBUG', true);
-define('WP_DEBUG_DISPLAY', true);
+define('WP_DEBUG_DISPLAY', false);
 define('WP_DEBUG_LOG', true);
-$sapi_type = php_sapi_name();
+/*$sapi_type = php_sapi_name();
 if ( $sapi_type == 'cli' ) {
     define( 'WP_DEBUG', false );
     error_reporting(0);
     @ini_set('display_errors', 0);
-}
+}*/
 // @ini_set('log_errors', 'On');
 
 define( 'WPMU_PLUGIN_DIR', '/mu-plugin' );
@@ -113,5 +111,5 @@ if ( !defined('ABSPATH') )
 /** Sets up WordPress vars and included files. */
 require_once(ABSPATH . 'wp-settings.php');
 
-/** change permisssions for plugin installation */
-define("FS_METHOD","direct");
+/* change permisssions for plugin installation 
+define("FS_METHOD","direct");*/

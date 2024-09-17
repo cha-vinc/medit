@@ -3,7 +3,7 @@
 <div id="hmwp_wrap" class="d-flex flex-row p-0 my-3">
 <?php echo $view->getAdminTabs(HMWP_Classes_Tools::getValue('page', 'hmwp_mapping')); ?>
     <div class="hmwp_row d-flex flex-row p-0 m-0">
-        <div class="hmwp_col flex-grow-1 px-3 py-3 mr-2 mb-3 bg-white">
+        <div class="hmwp_col flex-grow-1 p-0 pr-2 mr-2 mb-3">
 
             <form method="POST">
                 <?php wp_nonce_field('hmwp_mappsettings', 'hmwp_nonce') ?>
@@ -11,7 +11,7 @@
 
                     <div id="text" class="card col-sm-12 p-0 m-0 tab-panel tab-panel-first">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('Text Mapping', 'hide-my-wp'); ?>
-                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping') ?>" target="_blank" class="d-inline-block ml-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping') ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                         </h3>
                         <?php if (HMWP_Classes_Tools::getOption('hmwp_mode') == 'default' ) { ?>
                             <div class="card-body">
@@ -38,10 +38,13 @@
                                         <div class="col-sm-12 p-0 switch switch-sm">
                                             <input type="hidden" name="hmwp_mapping_classes" value="0"/>
                                             <input type="checkbox" id="hmwp_mapping_classes" name="hmwp_mapping_classes" class="switch" <?php echo(HMWP_Classes_Tools::getOption('hmwp_mapping_classes') ? 'checked="checked"' : '') ?> value="1"/>
-                                            <label for="hmwp_mapping_classes"><?php echo esc_html__('Text Mapping only Classes, IDs, JS variables', 'hide-my-wp'); ?></label>
-                                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping_style') ?>" target="_blank" class="d-inline-block ml-2"><i class="dashicons dashicons-editor-help"></i></a>
-                                            <div class="offset-1 text-black-50"><?php echo esc_html__("Change the text only in classes, styles & scrips. (Recommended ON)", 'hide-my-wp'); ?></div>
-                                            <div class="offset-1 text-black-50"><?php echo esc_html__("If this option is switched off, the text is changed brutally in source-code.", 'hide-my-wp'); ?></div>
+                                            <label for="hmwp_mapping_classes"><?php echo esc_html__('Text Mapping only Classes, IDs, JS variables', 'hide-my-wp'); ?>
+                                                <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping_style') ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <span class="text-black-50 small">(<?php echo esc_html__("recommended", 'hide-my-wp'); ?>)</span>
+                                            </label>
+                                            <div class="text-black-50 ml-5"><?php echo esc_html__("Change the text only in classes, styles & scrips. (Recommended ON)", 'hide-my-wp'); ?></div>
+                                            <div class="text-black-50 ml-5"><?php echo esc_html__("If this option is switched off, the text is changed brutally in source-code.", 'hide-my-wp'); ?></div>
+                                            <div class="text-danger my-2 ml-5"><?php echo esc_html__("Avoid using text mapping for commonly used paths such as wp-content, wp-admin, wp-includes because it can cause errors. Instead, use the 'Change Paths' feature in the Hide My Wp plugin to safely hide these paths.", 'hide-my-wp'); ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -75,11 +78,11 @@
                                         <div class="col-sm-12 hmwp_text_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                             <div class="hmwp_text_mapping_remove" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                             <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                                <input type="text" class="form-control bg-input" name="hmwp_text_mapping_from[]" value="<?php echo esc_attr($hmwp_text_mapping['from'][$index]) ?>" placeholder="Current Text ..."/>
+                                                <input type="text" class="form-control" name="hmwp_text_mapping_from[]" value="<?php echo esc_attr($hmwp_text_mapping['from'][$index]) ?>" placeholder="Current Text ..."/>
                                                 <div class="col-sm-1 py-2 px-0 text-center text-black-50" style="max-width: 30px"><?php echo '=>' ?></div>
                                             </div>
                                             <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                                <input type="text" class="form-control bg-input" name="hmwp_text_mapping_to[]" value="<?php echo esc_attr($hmwp_text_mapping['to'][$index]) ?>" placeholder="New Text ..."/>
+                                                <input type="text" class="form-control" name="hmwp_text_mapping_to[]" value="<?php echo esc_attr($hmwp_text_mapping['to'][$index]) ?>" placeholder="New Text ..."/>
                                             </div>
                                         </div>
                                         <?php
@@ -88,11 +91,11 @@
                                 <div class="col-sm-12 hmwp_text_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                     <div class="hmwp_text_mapping_remove" style="display: none" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                     <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                        <input type="text" class="form-control bg-input" name="hmwp_text_mapping_from[]" value="" placeholder="Current Text ..."/>
+                                        <input type="text" class="form-control" name="hmwp_text_mapping_from[]" value="" placeholder="Current Text ..."/>
                                         <div class="col-sm-1 py-2 px-0 text-center text-black-50" style="max-width: 30px"><?php echo '=>' ?></div>
                                     </div>
                                     <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                        <input type="text" class="form-control bg-input" name="hmwp_text_mapping_to[]" value="" placeholder="New Text ..."/>
+                                        <input type="text" class="form-control" name="hmwp_text_mapping_to[]" value="" placeholder="New Text ..."/>
                                     </div>
                                 </div>
                             </div>
@@ -121,7 +124,7 @@
                     </div>
                     <div id="url" class="card col-sm-12 p-0 m-0 tab-panel">
                             <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('URL Mapping', 'hide-my-wp'); ?>
-                                <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#url_mapping') ?>" target="_blank" class="d-inline-block ml-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                                <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#url_mapping') ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                             </h3>
                             <?php if (HMWP_Classes_Tools::getOption('hmwp_mode') == 'default' ) { ?>
                                 <div class="card-body">
@@ -162,11 +165,11 @@
                                             <div class="col-sm-12 hmwp_url_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                                 <div class="hmwp_url_mapping_remove" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                                 <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                                    <input type="text" class="form-control bg-input" name="hmwp_url_mapping_from[]" value="<?php echo esc_attr($hmwp_url_mapping['from'][$index]) ?>" placeholder="Current URL ..."/>
+                                                    <input type="text" class="form-control" name="hmwp_url_mapping_from[]" value="<?php echo esc_attr($hmwp_url_mapping['from'][$index]) ?>" placeholder="Current URL ..."/>
                                                     <div class="col-sm-1 py-2 px-0 text-center text-black-50" style="max-width: 30px"><?php echo '=>' ?></div>
                                                 </div>
                                                 <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                                    <input type="text" class="form-control bg-input" name="hmwp_url_mapping_to[]" value="<?php echo esc_attr($hmwp_url_mapping['to'][$index]) ?>" placeholder="New URL ..."/>
+                                                    <input type="text" class="form-control" name="hmwp_url_mapping_to[]" value="<?php echo esc_attr($hmwp_url_mapping['to'][$index]) ?>" placeholder="New URL ..."/>
                                                 </div>
                                             </div>
                                             <?php
@@ -175,11 +178,11 @@
                                     <div class="col-sm-12 hmwp_url_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                         <div class="hmwp_url_mapping_remove" style="display: none" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                         <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                            <input type="text" class="form-control bg-input" name="hmwp_url_mapping_from[]" value="" placeholder="Current URL ..."/>
+                                            <input type="text" class="form-control" name="hmwp_url_mapping_from[]" value="" placeholder="Current URL ..."/>
                                             <div class="col-sm-1 py-2 px-0 text-center text-black-50" style="max-width: 30px"><?php echo '=>' ?></div>
                                         </div>
                                         <div class="col-sm-6 py-0 px-0 input-group input-group">
-                                            <input type="text" class="form-control bg-input" name="hmwp_url_mapping_to[]" value="" placeholder="New URL ..."/>
+                                            <input type="text" class="form-control" name="hmwp_url_mapping_to[]" value="" placeholder="New URL ..."/>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +196,7 @@
                         </div>
                     <div id="cdn" class="card col-sm-12 p-0 m-0 tab-panel">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('CDN URLs', 'hide-my-wp'); ?>
-                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#cdn_urls') ?>" target="_blank" class="d-inline-block ml-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#cdn_urls') ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                         </h3>
                         <?php if (HMWP_Classes_Tools::getOption('hmwp_mode') == 'default' ) { ?>
                             <div class="card-body">
@@ -215,7 +218,7 @@
                                         <div class="col-sm-12 hmwp_cdn_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                             <div class="hmwp_cdn_mapping_remove" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                             <div class="col-sm-12 py-0 px-0 input-group input-group">
-                                                <input type="text" class="form-control bg-input" name="hmwp_cdn_urls[]" value="<?php echo esc_attr($row) ?>" placeholder="CDN URL ..."/>
+                                                <input type="text" class="form-control" name="hmwp_cdn_urls[]" value="<?php echo esc_attr($row) ?>" placeholder="CDN URL ..."/>
                                             </div>
                                         </div>
                                         <?php
@@ -224,7 +227,7 @@
                                 <div class="col-sm-12 hmwp_cdn_mapping row border-bottom border-light py-1 px-0 mx-0 my-0">
                                     <div class="hmwp_cdn_mapping_remove" style="display: none" onclick="jQuery(this).parent().remove()" title="<?php echo esc_html__('Remove') ?>">x</div>
                                     <div class="col-sm-12 py-0 px-0 input-group input-group">
-                                        <input type="text" class="form-control bg-input" name="hmwp_cdn_urls[]" value="" placeholder="CDN URL ..."/>
+                                        <input type="text" class="form-control" name="hmwp_cdn_urls[]" value="" placeholder="CDN URL ..."/>
                                     </div>
 
                                 </div>
@@ -253,10 +256,12 @@
                                         <div class="col-sm-12 p-0 switch switch-sm">
                                             <input type="hidden" name="hmwp_file_cache" value="0"/>
                                             <input type="checkbox" id="hmwp_file_cache" name="hmwp_file_cache" class="switch" <?php echo(HMWP_Classes_Tools::getOption('hmwp_file_cache') ? 'checked="checked"' : '') ?> value="1"/>
-                                            <label for="hmwp_file_cache"><?php echo esc_html__('Optimize CSS and JS files', 'hide-my-wp'); ?></label>
-                                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#optimize_css') ?>" target="_blank" class="d-inline-block ml-2"><i class="dashicons dashicons-editor-help"></i></a>
-                                            <div class="offset-1 text-black-50"><?php echo esc_html__('Cache CSS, JS and Images to increase the frontend loading speed.', 'hide-my-wp'); ?></div>
-                                            <div class="offset-1 text-black-50"><?php echo sprintf(esc_html__('Check the website loading speed with %sPingdom Tool%s', 'hide-my-wp'), '<a href="https://tools.pingdom.com/" target="_blank">', '</a>'); ?></div>
+                                            <label for="hmwp_file_cache"><?php echo esc_html__('Optimize CSS and JS files', 'hide-my-wp'); ?>
+                                                <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#optimize_css') ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <span class="text-black-50 small">(<?php echo esc_html__("not recommended", 'hide-my-wp'); ?>)</span> </label>
+                                            </label>
+                                            <div class="text-black-50 ml-5"><?php echo esc_html__('Cache CSS, JS and Images to increase the frontend loading speed.', 'hide-my-wp'); ?></div>
+                                            <div class="text-black-50 ml-5"><?php echo sprintf(esc_html__('Check the website loading speed with %sPingdom Tool%s', 'hide-my-wp'), '<a href="https://tools.pingdom.com/" target="_blank">', '</a>'); ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -271,11 +276,12 @@
                                        <div class="col-sm-12 p-0 switch switch-sm switch-red">
                                             <input type="hidden" name="hmwp_mapping_file" value="0"/>
                                             <input type="checkbox" id="hmwp_mapping_file" name="hmwp_mapping_file" class="switch" <?php echo(HMWP_Classes_Tools::getOption('hmwp_mapping_file') ? 'checked="checked"' : '') ?> value="1"/>
-                                            <label for="hmwp_mapping_file"><?php echo esc_html__('Text Mapping in CSS and JS files including caches', 'hide-my-wp'); ?></label>
-                                            <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping_files') ?>" target="_blank" class="d-inline-block ml-2"><i class="dashicons dashicons-editor-help"></i></a>
-
-                                            <div class="offset-1 text-black-50"><?php echo esc_html__("Change the text in all CSS and JS files including cached files generated by cache plugins.", 'hide-my-wp'); ?></div>
-                                            <div class="offset-1 mt-1 p-2 alert-danger"><?php echo esc_html__("If you switch this option on, it will significantly slow down the website as CSS and JS files are loaded dynamically and not through rewrites to be able to change the text within all of them", 'hide-my-wp'); ?></div>
+                                            <label for="hmwp_mapping_file"><?php echo esc_html__('Text Mapping in CSS and JS files including caches', 'hide-my-wp'); ?>
+                                               <a href="<?php echo esc_url(HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/url-mapping-text-mapping/#text_mapping_files') ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                               <span class="text-black-50 small">(<?php echo esc_html__("not recommended", 'hide-my-wp'); ?>)</span> </label>
+                                            </label>
+                                            <div class="text-black-50 ml-5"><?php echo esc_html__("Change the text in all CSS and JS files including cached files generated by cache plugins.", 'hide-my-wp'); ?></div>
+                                            <div class="alert-danger mt-1 p-2 ml-5"><?php echo esc_html__("If you switch this option on, it will significantly slow down the website as CSS and JS files are loaded dynamically and not through rewrites to be able to change the text within all of them", 'hide-my-wp'); ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -295,7 +301,7 @@
 
             </form>
         </div>
-        <div class="hmwp_col hmwp_col_side p-0 m-0 mr-2">
+        <div class="hmwp_col hmwp_col_side p-0 pr-2 mr-2">
             <?php $view->show('blocks/ChangeCacheFiles'); ?>
             <?php $view->show('blocks/SecurityCheck'); ?>
         </div>

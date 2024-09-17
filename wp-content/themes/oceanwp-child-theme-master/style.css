@@ -16,7 +16,17 @@ Version: 1.0
     background-color:white;
     padding:6px 16px;
     border-radius:6px;
+    margin-top: 25px;
 }
+
+#footer-bottom a, #footer-bottom #footer-bottom-menu a {
+    margin-top: -5px;
+}
+
+#footer-bottom a:hover{
+    color: #28babf !important;
+}
+
 .popup-overlay{
     position:fixed;
     width:100%;
@@ -25,10 +35,13 @@ Version: 1.0
     display:flex;
     justify-content: center;
     align-items:center;
-    z-index: 999; /* à enlever */
+    z-index: 1000;
     top:0;
     left:0;
 }
+
+
+
 .popup-salon{
     background:white;
     border-radius:20px;

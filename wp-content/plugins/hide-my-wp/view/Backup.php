@@ -1,7 +1,7 @@
 <?php if(!isset($view)) return; ?>
 <div id="hmwp_wrap" class="d-flex flex-row p-0 my-3">
     <div class="hmwp_row d-flex flex-row p-0 m-0">
-        <div class="hmwp_col flex-grow-1 px-3 py-3 mr-2 mb-3 bg-white">
+        <div class="hmwp_col flex-grow-1 px-2 py-0 mr-2 mb-3">
 
             <div class="card col-sm-12 p-0 m-0">
                 <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__('Backup/Restore Settings', 'hide-my-wp'); ?></h3>
@@ -9,10 +9,10 @@
                     <div class="text-black-50 mb-2"><?php echo esc_html__('Click Backup and the download will start automatically. You can use the Backup for all your websites.', 'hide-my-wp'); ?></div>
 
                     <div class="hmwp_settings_backup">
-                        <form action="" target="_blank" method="POST">
+                        <form action="" method="POST">
                             <?php wp_nonce_field('hmwp_backup', 'hmwp_nonce'); ?>
                             <input type="hidden" name="action" value="hmwp_backup"/>
-                            <button type="submit" class="btn rounded-0 btn-default" name="hmwp_backup" ><?php echo esc_html__('Backup Settings', 'hide-my-wp') ?></button>
+                            <button type="submit" class="btn rounded-0 btn-default noload" name="hmwp_backup" ><?php echo esc_html__('Backup Settings', 'hide-my-wp') ?></button>
                             <button type="button" class="btn rounded-0 btn-light hmwp_restore hmwp_modal" onclick="jQuery('#hmwp_settings_restore').modal('show')" name="hmwp_restore"><?php echo esc_html__('Restore Settings', 'hide-my-wp') ?></button>
                         </form>
                     </div>
@@ -75,7 +75,7 @@
             </div>
 
         </div>
-        <div class="hmwp_col hmwp_col_side p-0 m-0 mr-2">
+        <div class="hmwp_col hmwp_col_side p-0 pr-2 mr-2">
             <div class="card col-sm-12 m-0 p-0 rounded-0">
                 <div class="card-body f-gray-dark text-left">
                     <h3 class="panel-title"><?php echo esc_html__('Backup Settings', 'hide-my-wp'); ?></h3>
